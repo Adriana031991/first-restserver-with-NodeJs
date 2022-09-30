@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sign In</title>
+</head>
+
+<body>
+
+    <h1>Google Sign In</h1>
+    <hr>
+
+    <div id="g_id_onload" 
+    data-client_id="912313249489-f40fkegc6262s4b793u8trgredtlp3dr.apps.googleusercontent.com"
+        data-callback="handleCredentialResponse" data-auto_select="true" data-auto_prompt="false">
+    </div>
+
+    <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with"
+        data-shape="rectangular" data-logo_alignment="left">
+    </div>
+
+    <button id="google_signout">Sign Out</button>
+    <hr>
+    <h1>One Tap</h1>
+
+
+    <script>
+        function handleCredentialResponse(response) {
+            // decodeJwtResponse() is a custom function defined by you
+            // to decode the credential response.
+            console.log('token google', decodeJwtResponse(response.credential));
+            const body = { id_token: response.credential }
+            //    const responsePayload = decodeJwtResponse(response.credential);
+
+            //    console.log("ID: " + responsePayload.sub);
+            //    console.log('Full Name: ' + responsePayload.name);
+            //    console.log('Given Name: ' + responsePayload.given_name);
+            //    console.log('Family Name: ' + responsePayload.family_name);
+            //    console.log("Image URL: " + responsePayload.picture);
+            //    console.log("Email: " + responsePayload.email);
+
+            fetch('http://localhost:8080/api/auth/google', {
+                method: 'POST',
+                headers: { 'content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            })
+                .then(resp => resp.json())
+                .then(resp => { localStorage.setItem('email', resp.user.email) })
+                .catch(err => console.warn)
+
+        }
+
+
+        const button = document.getElementById('google_signout');
+        button.onclick = async () => {
+            console.log(google.accounts.id)
+            google.accounts.id.disableAutoSelect()
+            google.accounts.id.revoke(localStorage.getItem('email'), done => {
+                console.log('consent revoked');
+                localStorage.clear()
+                location.reload()
+            });
+        }
+
+    </script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+</body>
+
+</html>
