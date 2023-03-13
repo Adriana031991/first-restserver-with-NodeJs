@@ -61,11 +61,23 @@ const validateProduct = async (id ) => {
 }
 
 
+const validateCollections =  (collection = '', collections = [] ) => {
+
+    const include = collections.includes(collection);
+    if (!include) {
+        throw new Error(`la coleccion ${collection} no es permitida, las permitidas son: ${collections}`);
+    }
+    return true;
+
+}
+
+
 module.exports ={
     validateRole,
     validateEmail,
     validateUserById,
     validateUserState,
     validateCategory,
-    validateProduct
+    validateProduct,
+    validateCollections
 }

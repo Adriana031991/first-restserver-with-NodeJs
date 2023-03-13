@@ -27,6 +27,10 @@ const ProductSchema = Schema({
     },
     description: { type: String,},
     available: { type: String, default:true},
+    image: { type: String, 
+        // default: ''
+    },
+    
 }, { versionKey: false})
 
 ProductSchema.methods.toJSON = function () {
